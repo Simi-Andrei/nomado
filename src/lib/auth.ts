@@ -32,7 +32,7 @@ export const config = {
   ],
   secret: process.env.NEXTAUTH_SECRET,
   session: {
-    strategy: "database",
+    strategy: "jwt",
   },
 } satisfies NextAuthOptions;
 

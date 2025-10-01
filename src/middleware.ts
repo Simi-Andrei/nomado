@@ -1,9 +1,14 @@
 import { withAuth } from "next-auth/middleware";
+import type { NextRequestWithAuth } from "next-auth/middleware";
 
-export default withAuth({
-  pages: {
-    signIn: "/auth",
-  },
-});
+export function middleware(req: NextRequestWithAuth) {
+  return withAuth(req, {
+    pages: {
+      signIn: "/auth",
+    },
+  });
+}
 
-export const config = { matcher: ["/dashboard(.*)"] };
+export const config = {
+  matcher: ["/((?!auth).*)"],
+};
