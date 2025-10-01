@@ -1,18 +1,31 @@
-import NextAuth from "next-auth";
-import Google from "next-auth/providers/google";
+import type {
+  GetServerSidePropsContext,
+  NextApiRequest,
+  NextApiResponse,
+} from "next";
+import type { NextAuthOptions } from "next-auth";
+import { getServerSession } from "next-auth";
 import { DrizzleAdapter } from "@auth/drizzle-adapter";
-import { users, accounts, sessions, verificationTokens } from "@/db/schema";
 import { db } from "@/db";
+import {
+  accounts,
+  authenticators,
+  sessions,
+  users,
+  verificationTokens,
+} from "@/db/schema";
+import GoogleProvider from "next-auth/providers/google";
 
-export const { handlers, auth } = NextAuth({
+export const config = {
   adapter: DrizzleAdapter(db, {
     usersTable: users,
     accountsTable: accounts,
     sessionsTable: sessions,
     verificationTokensTable: verificationTokens,
+    authenticatorsTable: authenticators,
   }),
   providers: [
-    Google({
+    GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID!,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
     }),
@@ -21,4 +34,13 @@ export const { handlers, auth } = NextAuth({
   session: {
     strategy: "database",
   },
-});
+} satisfies NextAuthOptions;
+
+export function auth(
+  ...args:
+    | [GetServerSidePropsContext["req"], GetServerSidePropsContext["res"]]
+    | [NextApiRequest, NextApiResponse]
+    | []
+) {
+  return getServerSession(...args, config);
+}
