@@ -1,0 +1,222 @@
+import { Dispatch, SetStateAction, useState } from "react";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "../ui/card";
+import Image from "next/image";
+import { Button } from "../ui/button";
+import { GoogleIcon } from "../icons/google-icon";
+import {
+  Form,
+  FormItem,
+  FormControl,
+  FormLabel,
+  FormField,
+  FormMessage,
+} from "../ui/form";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Input } from "../ui/input";
+import { SignInInput, signInSchema } from "@/types/auth";
+import { Eye, EyeOff, TriangleAlert } from "lucide-react";
+import { signIn } from "next-auth/react";
+import { GithubIcon } from "../icons/github-icon";
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupInput,
+} from "../ui/input-group";
+import { useRouter } from "next/navigation";
+import { Spinner } from "../ui/spinner";
+import { cn } from "@/lib/utils";
+
+type AuthState = "signIn" | "signUp";
+
+export function SignInCard({
+  setAuthState,
+}: {
+  setAuthState: Dispatch<SetStateAction<AuthState>>;
+}) {
+  const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const router = useRouter();
+
+  const form = useForm<SignInInput>({
+    resolver: zodResolver(signInSchema),
+    defaultValues: {
+      email: "",
+      password: "",
+    },
+  });
+
+  const signInHandler = async (data: SignInInput) => {
+    try {
+      setLoading(true);
+
+      const result = await signIn("credentials", {
+        email: data.email,
+        password: data.password,
+        redirect: false,
+      });
+
+      if (result?.error) {
+        setError(result.error);
+        setLoading(false);
+        return;
+      }
+
+      router.push("/journeys");
+      router.refresh();
+
+      setLoading(false);
+    } catch (error) {
+      setError("Something went wrong");
+      setLoading(false);
+    }
+  };
+
+  return (
+    <Card className="w-full max-w-sm">
+      <CardHeader className="text-center">
+        <Image
+          src="/images/logo.png"
+          alt="Nomado"
+          width={56}
+          height={56}
+          className="mb-4 mx-auto w-14 h-14"
+          loading="eager"
+        />
+        <CardTitle>Welcome back!</CardTitle>
+        <CardDescription>
+          Let&apos;s continue exploring the world
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        <Form {...form}>
+          <form
+            onSubmit={form.handleSubmit(signInHandler)}
+            className="space-y-6"
+          >
+            <FormField
+              control={form.control}
+              name="email"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Email</FormLabel>
+                  <FormControl>
+                    <Input
+                      disabled={loading}
+                      placeholder="email@example.com"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="password"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Password</FormLabel>
+                  <FormControl>
+                    <InputGroup>
+                      <InputGroupInput
+                        disabled={loading}
+                        type={showPassword ? "text" : "password"}
+                        maxLength={32}
+                        placeholder="••••••••"
+                        {...field}
+                      />
+                      <InputGroupAddon
+                        className="cursor-pointer"
+                        align="inline-end"
+                        onClick={() => setShowPassword(!showPassword)}
+                      >
+                        {showPassword ? <Eye /> : <EyeOff />}
+                      </InputGroupAddon>
+                    </InputGroup>
+                  </FormControl>
+
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            {error && (
+              <p className="text-destructive text-[13px] flex items-center justify-center gap-x-1">
+                <TriangleAlert className="size-3.5 stroke-destructive mb-0.5 stroke-2" />
+                {error}
+              </p>
+            )}
+            <Button type="submit" disabled={loading} className="w-full">
+              {loading ? (
+                <>
+                  <Spinner className="stroke-muted" />
+                  <span className="text-muted">Signing in</span>
+                </>
+              ) : (
+                <>Sign in</>
+              )}
+            </Button>
+          </form>
+        </Form>
+        <div className="after:border-border relative text-center text-xs after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t my-4">
+          <span className="bg-card text-muted-foreground relative z-10 px-2">
+            Or continue with
+          </span>
+        </div>
+        <div className="flex flex-col gap-y-4">
+          <Button
+            disabled={loading}
+            type="button"
+            onClick={() => signIn("google", { callbackUrl: "/journeys" })}
+            variant="outline"
+            className="w-full"
+          >
+            <GoogleIcon />
+            Google
+          </Button>
+          <Button
+            disabled={loading}
+            type="button"
+            onClick={() => signIn("github", { callbackUrl: "/journeys" })}
+            variant="outline"
+            className="w-full"
+          >
+            <GithubIcon />
+            Github
+          </Button>
+        </div>
+      </CardContent>
+      <CardFooter className="flex-col gap-y-2">
+        <p
+          className={cn(
+            "text-teal-800 text-[13px] font-semibold cursor-pointer hover:underline w-full text-center",
+            loading && "pointer-events-none opacity-50"
+          )}
+        >
+          Forgot password?
+        </p>
+        <p className="text-muted-foreground text-[13px] w-full text-center">
+          Don&apos;t have an account?{" "}
+          <span
+            className={cn(
+              "hover:underline cursor-pointer font-semibold text-teal-800",
+              loading && "pointer-events-none opacity-50"
+            )}
+            onClick={() => setAuthState("signUp")}
+          >
+            Sign up here
+          </span>
+        </p>
+      </CardFooter>
+    </Card>
+  );
+}

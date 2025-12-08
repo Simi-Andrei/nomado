@@ -1,14 +1,9 @@
-import { auth } from "@/lib/auth";
 import { getQueryClient, trpc } from "@/trpc/server";
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 import { Suspense } from "react";
 import { TestView } from "../views/test-view";
 
-const TestPage = async () => {
-  const session = await auth();
-
-  console.log(session);
-
+const JourneysPage = async () => {
   const queryClient = getQueryClient();
 
   void queryClient.prefetchQuery(trpc.users.getAll.queryOptions());
@@ -22,4 +17,4 @@ const TestPage = async () => {
   );
 };
 
-export default TestPage;
+export default JourneysPage;

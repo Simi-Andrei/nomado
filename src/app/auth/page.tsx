@@ -1,21 +1,14 @@
-"use client";
+import { auth } from "@/lib/auth";
+import { AuthView } from "../views/auth-view";
+import { redirect } from "next/navigation";
 
-import { Button } from "@/components/ui/button";
-import { signIn, signOut } from "next-auth/react";
+const AuthPage = async () => {
+  const session = await auth();
 
-const Authpage = () => {
-  const signInHandler = () => {
-    signIn("google", { callbackUrl: "/test" });
-  };
+  if (session) {
+    redirect("/journeys");
+  }
 
-  return (
-    <div>
-      <h1>Login</h1>
-      <Button type="button" onClick={signInHandler}>
-        Continue with Google
-      </Button>
-      <Button onClick={() => signOut()}>Sign out</Button>
-    </div>
-  );
+  return <AuthView />;
 };
-export default Authpage;
+export default AuthPage;
