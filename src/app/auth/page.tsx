@@ -1,5 +1,5 @@
 import { auth } from "@/lib/auth";
-import { AuthView } from "../views/auth-view";
+import { AuthView } from "../views/auth/auth-view";
 import { redirect } from "next/navigation";
 
 const AuthPage = async () => {

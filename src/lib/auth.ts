@@ -95,6 +95,23 @@ export const config = {
       }
     },
   },
+  callbacks: {
+    jwt({ token, user }) {
+      if (user) {
+        token.id = user.id;
+      }
+      return token;
+    },
+    session({ session, token }) {
+      return {
+        ...session,
+        user: {
+          ...session.user,
+          id: token.id,
+        },
+      };
+    },
+  },
 } satisfies NextAuthOptions;
 
 export function auth(

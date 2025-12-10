@@ -17,7 +17,7 @@ export const users = pgTable("user", {
   email: text("email").unique(),
   emailVerified: timestamp("emailVerified", { mode: "date" }),
   image: text("image"),
-  password: varchar("password", { length: 128 }).notNull(),
+  password: varchar("password", { length: 128 }),
 });
 
 export const accounts = pgTable(
@@ -91,4 +91,65 @@ export const authenticators = pgTable(
       }),
     },
   ]
+);
+
+export const journeys = pgTable("journeys", {
+  id: text("id")
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  name: text("name").notNull(),
+  theme: text("theme").notNull().default("teal"),
+  createdBy: text("owner_id").references(() => users.id, {
+    onDelete: "cascade",
+  }),
+  createdAt: timestamp("created_at", { mode: "date" }).defaultNow().notNull(),
+});
+
+export const channels = pgTable("channels", {
+  id: text("id")
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+
+  journeyId: text("journey_id")
+    .notNull()
+    .references(() => journeys.id, { onDelete: "cascade" }),
+
+  name: text("name").notNull(),
+
+  isPrivate: boolean("is_private").notNull().default(false),
+
+  createdBy: text("created_by").references(() => users.id, {
+    onDelete: "set null",
+  }),
+
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+export const userJourneys = pgTable(
+  "user_journeys",
+  {
+    userId: text("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    journeyId: text("journey_id")
+      .notNull()
+      .references(() => journeys.id, { onDelete: "cascade" }),
+    role: text("role").$type<"owner" | "admin" | "member">().notNull(),
+    joinedAt: timestamp("joined_at", { mode: "date" }).defaultNow().notNull(),
+  },
+  (table) => [primaryKey({ columns: [table.userId, table.journeyId] })]
+);
+
+export const userChannels = pgTable(
+  "user_channels",
+  {
+    userId: text("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    channelId: text("channel_id")
+      .notNull()
+      .references(() => channels.id, { onDelete: "cascade" }),
+    joinedAt: timestamp("joined_at").defaultNow().notNull(),
+  },
+  (table) => [primaryKey({ columns: [table.userId, table.channelId] })]
 );

@@ -22,7 +22,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from "../ui/input";
 import { SignInInput, signInSchema } from "@/types/auth";
-import { Eye, EyeOff, TriangleAlert } from "lucide-react";
+import { Eye, EyeOff, LogIn, TriangleAlert } from "lucide-react";
 import { signIn } from "next-auth/react";
 import { GithubIcon } from "../icons/github-icon";
 import {
@@ -30,7 +30,6 @@ import {
   InputGroupAddon,
   InputGroupInput,
 } from "../ui/input-group";
-import { useRouter } from "next/navigation";
 import { Spinner } from "../ui/spinner";
 import { cn } from "@/lib/utils";
 
@@ -44,8 +43,6 @@ export function SignInCard({
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
-  const router = useRouter();
 
   const form = useForm<SignInInput>({
     resolver: zodResolver(signInSchema),
@@ -62,7 +59,8 @@ export function SignInCard({
       const result = await signIn("credentials", {
         email: data.email,
         password: data.password,
-        redirect: false,
+        redirect: true,
+        callbackUrl: "/journeys",
       });
 
       if (result?.error) {
@@ -70,9 +68,6 @@ export function SignInCard({
         setLoading(false);
         return;
       }
-
-      router.push("/journeys");
-      router.refresh();
 
       setLoading(false);
     } catch (error) {
@@ -91,6 +86,7 @@ export function SignInCard({
           height={56}
           className="mb-4 mx-auto w-14 h-14"
           loading="eager"
+          fetchPriority="high"
         />
         <CardTitle>Welcome back!</CardTitle>
         <CardDescription>
@@ -158,11 +154,14 @@ export function SignInCard({
             <Button type="submit" disabled={loading} className="w-full">
               {loading ? (
                 <>
-                  <Spinner className="stroke-muted" />
-                  <span className="text-muted">Signing in</span>
+                  <Spinner />
+                  Signing in
                 </>
               ) : (
-                <>Sign in</>
+                <>
+                  <LogIn />
+                  Sign in
+                </>
               )}
             </Button>
           </form>
@@ -198,7 +197,7 @@ export function SignInCard({
       <CardFooter className="flex-col gap-y-2">
         <p
           className={cn(
-            "text-teal-800 text-[13px] font-semibold cursor-pointer hover:underline w-full text-center",
+            "text-teal-800 text-[13px] font-semibold cursor-pointer hover:underline underline-offset-2 w-full text-center",
             loading && "pointer-events-none opacity-50"
           )}
         >
@@ -208,7 +207,7 @@ export function SignInCard({
           Don&apos;t have an account?{" "}
           <span
             className={cn(
-              "hover:underline cursor-pointer font-semibold text-teal-800",
+              "hover:underline underline-offset-2 cursor-pointer font-semibold text-teal-800",
               loading && "pointer-events-none opacity-50"
             )}
             onClick={() => setAuthState("signUp")}

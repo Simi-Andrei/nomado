@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
-import { Inter_Tight } from "next/font/google";
+import { Georama } from "next/font/google";
 import "./globals.css";
 import { TRPCReactProvider } from "@/trpc/client";
 
-const interTight = Inter_Tight({
+const georama = Georama({
   subsets: ["latin"],
 });
 
@@ -20,7 +20,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${interTight.className}  antialiased`}>
+      <body className={`${georama.className}  antialiased`}>
         <TRPCReactProvider>{children}</TRPCReactProvider>
       </body>
     </html>

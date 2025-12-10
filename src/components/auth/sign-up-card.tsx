@@ -22,7 +22,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from "../ui/input";
 import { SignUpInput, signUpSchema } from "@/types/auth";
-import { Eye, EyeOff, TriangleAlert } from "lucide-react";
+import { Eye, EyeOff, TriangleAlert, UserRoundPlus } from "lucide-react";
 import { signIn } from "next-auth/react";
 import { GithubIcon } from "../icons/github-icon";
 import {
@@ -100,6 +100,7 @@ export function SignUpCard({
           height={56}
           className="mx-auto w-14 h-14"
           loading="eager"
+          fetchPriority="high"
         />
         <CardTitle>Nice to meet you!</CardTitle>
         <CardDescription>
@@ -214,11 +215,14 @@ export function SignUpCard({
             <Button type="submit" disabled={loading} className="w-full">
               {loading ? (
                 <>
-                  <Spinner className="stroke-muted" />
-                  <span className="text-muted">Signing up</span>
+                  <Spinner />
+                  Signing up
                 </>
               ) : (
-                <>Sign up</>
+                <>
+                  <UserRoundPlus className="stroke-primary-foreground" />
+                  Sign up
+                </>
               )}
             </Button>
           </form>
@@ -232,7 +236,7 @@ export function SignUpCard({
           <Button
             disabled={loading}
             type="button"
-            onClick={() => signIn("google", { callbackUrl: "/test" })}
+            onClick={() => signIn("google", { callbackUrl: "/journeys" })}
             variant="outline"
             className="w-full"
           >
@@ -242,7 +246,7 @@ export function SignUpCard({
           <Button
             disabled={loading}
             type="button"
-            onClick={() => signIn("github", { callbackUrl: "/test" })}
+            onClick={() => signIn("github", { callbackUrl: "/journeys" })}
             variant="outline"
             className="w-full"
           >
@@ -254,7 +258,7 @@ export function SignUpCard({
       <CardFooter className="flex-col gap-y-2">
         <p
           className={cn(
-            "text-teal-800 text-[13px] font-semibold cursor-pointer hover:underline w-full text-center",
+            "text-teal-800 text-[13px] font-semibold cursor-pointer hover:underline underline-offset-2 w-full text-center",
             loading && "pointer-events-none opacity-50"
           )}
         >
@@ -264,7 +268,7 @@ export function SignUpCard({
           Already have an account?{" "}
           <span
             className={cn(
-              "hover:underline cursor-pointer font-semibold text-teal-800",
+              "hover:underline underline-offset-2 cursor-pointer font-semibold text-teal-800",
               loading && "pointer-events-none opacity-50"
             )}
             onClick={() => setAuthState("signIn")}

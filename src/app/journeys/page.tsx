@@ -1,20 +1,18 @@
-import { getQueryClient, trpc } from "@/trpc/server";
-import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
-import { Suspense } from "react";
-import { TestView } from "../views/test-view";
+import { trpcCaller } from "@/trpc/server";
+import { redirect } from "next/navigation";
 
-const JourneysPage = async () => {
-  const queryClient = getQueryClient();
+const JourneyPage = async () => {
+  const caller = await trpcCaller();
 
-  void queryClient.prefetchQuery(trpc.users.getAll.queryOptions());
+  const journeys = await caller.users.getUserJourneys();
 
-  return (
-    <HydrationBoundary state={dehydrate(queryClient)}>
-      <Suspense fallback={<p>Loading...</p>}>
-        <TestView />
-      </Suspense>
-    </HydrationBoundary>
-  );
+  console.log(journeys);
+
+  if (journeys.length === 0) {
+    redirect("/journeys/create");
+  }
+
+  redirect(`/journeys/${journeys[0].journeyId}`);
 };
 
-export default JourneysPage;
+export default JourneyPage;

@@ -1,17 +1,19 @@
-import { users } from "@/db/schema";
-import { createTRPCRouter, baseProcedure } from "../init";
+import { journeys, userJourneys } from "@/db/schema";
+import { createTRPCRouter, protectedProcedure } from "../init";
+import { eq } from "drizzle-orm";
 
 export const usersRouter = createTRPCRouter({
-  getAll: baseProcedure.query(async ({ ctx }) => {
-    const allUsers = await ctx.db
+  getUserJourneys: protectedProcedure.query(async ({ ctx }) => {
+    const userId = ctx.session.user.id;
+
+    return await ctx.db
       .select({
-        id: users.id,
-        name: users.name,
-        email: users.email,
-        emailVerified: users.emailVerified,
-        image: users.image,
+        journeyId: userJourneys.journeyId,
+        role: userJourneys.role,
+        journeyName: journeys.name,
       })
-      .from(users);
-    return allUsers;
+      .from(userJourneys)
+      .leftJoin(journeys, eq(journeys.id, userJourneys.journeyId))
+      .where(eq(userJourneys.userId, userId));
   }),
 });

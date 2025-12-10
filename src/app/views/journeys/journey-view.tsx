@@ -5,22 +5,16 @@ import { useTRPC } from "@/trpc/client";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { signOut } from "next-auth/react";
 
-export function TestView() {
+export function JourneyView({ id }: { id: string }) {
   const trpc = useTRPC();
 
-  const { data: users } = useSuspenseQuery(trpc.users.getAll.queryOptions());
-
-  console.log(users);
+  const { data: journey } = useSuspenseQuery(
+    trpc.journeys.getJourneyById.queryOptions({ id })
+  );
 
   return (
     <div>
-      TestView
-      <div className="mb-10">
-        <h1>Users:</h1>
-        {users.map((user) => (
-          <p key={user.id}>{user.email}</p>
-        ))}
-      </div>
+      <h1 className="mb-4">Journey view</h1>
       <Button
         onClick={() => signOut({ callbackUrl: "/auth" })}
         type="button"
