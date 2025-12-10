@@ -8,11 +8,13 @@ const JourneyPage = async () => {
 
   console.log(journeys);
 
-  if (journeys.length === 0) {
-    redirect("/journeys/create");
-  }
+  if (journeys) {
+    if (journeys.length === 0) {
+      redirect("/journeys/create");
+    }
 
-  redirect(`/journeys/${journeys[0].journeyId}`);
+    redirect(`/journeys/${journeys[0].journeyId}`);
+  }
 };
 
 export default JourneyPage;
