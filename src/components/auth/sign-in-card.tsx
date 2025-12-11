@@ -59,7 +59,7 @@ export function SignInCard({
       const result = await signIn("credentials", {
         email: data.email,
         password: data.password,
-        redirect: true,
+        redirect: false,
         callbackUrl: "/journeys",
       });
 
