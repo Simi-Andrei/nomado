@@ -1,16 +1,12 @@
 import { JourneyView } from "@/app/views/journeys/journey-view";
-import { trpc } from "@/trpc/server";
-import {
-  dehydrate,
-  HydrationBoundary,
-  QueryClient,
-} from "@tanstack/react-query";
+import { getQueryClient, trpc } from "@/trpc/server";
+import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 import { ErrorBoundary } from "react-error-boundary";
 
 const JourneyPage = async ({ params }: { params: Promise<{ id: string }> }) => {
   const { id } = await params;
 
-  const queryClient = new QueryClient();
+  const queryClient = getQueryClient();
 
   void queryClient.prefetchQuery(
     trpc.journeys.getJourneyById.queryOptions({ id })
