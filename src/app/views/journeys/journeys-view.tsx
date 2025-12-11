@@ -25,5 +25,5 @@ export function JourneysView() {
     }
   }, [journeys, router]);
 
-  return <FullPageSpinner />;
+  return null;
 }
