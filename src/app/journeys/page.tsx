@@ -4,6 +4,8 @@ import { JourneysView } from "../views/journeys/journeys-view";
 import { ErrorBoundary } from "react-error-boundary";
 import { Suspense } from "react";
 
+export const dynamic = "force-dynamic";
+
 const JourneyPage = async () => {
   const queryClient = getQueryClient();
 
@@ -11,11 +13,11 @@ const JourneyPage = async () => {
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
-      <Suspense fallback={<p>Loading</p>}>
-        <ErrorBoundary fallback={<p>Error</p>}>
+      <ErrorBoundary fallback={<p>Error</p>}>
+        <Suspense fallback={<p>Loading</p>}>
           <JourneysView />
-        </ErrorBoundary>
-      </Suspense>
+        </Suspense>
+      </ErrorBoundary>
     </HydrationBoundary>
   );
 };

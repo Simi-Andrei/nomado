@@ -4,6 +4,7 @@ import { db } from "@/db";
 
 export const createTRPCContext = cache(async () => {
   const session = await auth();
+
   return {
     session,
     db,
