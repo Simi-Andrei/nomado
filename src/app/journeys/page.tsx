@@ -4,8 +4,6 @@ import { JourneysView } from "../views/journeys/journeys-view";
 import { ErrorBoundary } from "react-error-boundary";
 import { Suspense } from "react";
 
-export const dynamic = "force-dynamic";
-
 const JourneyPage = async () => {
   const queryClient = getQueryClient();
 
