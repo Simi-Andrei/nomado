@@ -1,5 +1,4 @@
 import { JourneyView } from "@/app/views/journeys/journey-view";
-import { FullPageSpinner } from "@/components/utils/full-page-spinner";
 import { getQueryClient, trpc } from "@/trpc/server";
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 import { Suspense } from "react";
@@ -16,7 +15,7 @@ const JourneyPage = async ({ params }: { params: Promise<{ id: string }> }) => {
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
-      <Suspense fallback={<FullPageSpinner />}>
+      <Suspense fallback={<p>Loading</p>}>
         <ErrorBoundary fallback={<p>Error</p>}>
           <JourneyView id={id} />
         </ErrorBoundary>
