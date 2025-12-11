@@ -32,6 +32,7 @@ import {
 } from "../ui/input-group";
 import { Spinner } from "../ui/spinner";
 import { cn } from "@/lib/utils";
+import { useRouter } from "next/navigation";
 
 type AuthState = "signIn" | "signUp";
 
@@ -43,6 +44,8 @@ export function SignInCard({
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const router = useRouter();
 
   const form = useForm<SignInInput>({
     resolver: zodResolver(signInSchema),
@@ -67,6 +70,10 @@ export function SignInCard({
         setError(result.error);
         setLoading(false);
         return;
+      }
+
+      if (result?.url) {
+        router.replace(result.url);
       }
 
       setLoading(false);
