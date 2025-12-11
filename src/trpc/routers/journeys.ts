@@ -50,8 +50,6 @@ export const journeysRouter = createTRPCRouter({
     .query(async ({ ctx, input }) => {
       const userId = ctx.session.user.id;
 
-      console.log(userId);
-
       const [journey] = await db
         .select()
         .from(journeys)

@@ -1,26 +1,17 @@
-import { getQueryClient, trpc } from "@/trpc/server";
-import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
-import { JourneysView } from "../views/journeys/journeys-view";
-import { ErrorBoundary } from "react-error-boundary";
-import { Suspense } from "react";
-import { FullPageSpinner } from "@/components/utils/full-page-spinner";
+import { trpcCaller } from "@/trpc/server";
+import { redirect } from "next/navigation";
 
 export const dynamic = "force-dynamic";
 
 const JourneyPage = async () => {
-  const queryClient = getQueryClient();
+  const caller = await trpcCaller();
+  const journeys = await caller.users.getUserJourneys();
 
-  void queryClient.prefetchQuery(trpc.users.getUserJourneys.queryOptions());
+  if (journeys.length === 0) {
+    redirect("/journeys/create");
+  }
 
-  return (
-    <HydrationBoundary state={dehydrate(queryClient)}>
-      <ErrorBoundary fallback={<p>Error</p>}>
-        <Suspense fallback={<FullPageSpinner />}>
-          <JourneysView />
-        </Suspense>
-      </ErrorBoundary>
-    </HydrationBoundary>
-  );
+  redirect(`/journeys/${journeys[0].journeyId}`);
 };
 
 export default JourneyPage;
