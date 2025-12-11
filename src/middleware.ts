@@ -10,7 +10,5 @@ export function middleware(req: NextRequestWithAuth) {
 }
 
 export const config = {
-  matcher: [
-    "/((?!api|_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt|auth|.*\\.[^/]+$).*)",
-  ],
+  matcher: ["/journeys/:path"],
 };
