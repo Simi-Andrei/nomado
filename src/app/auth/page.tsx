@@ -5,7 +5,7 @@ import { redirect } from "next/navigation";
 const AuthPage = async () => {
   const session = await auth();
 
-  if (session) {
+  if (session?.user) {
     redirect("/journeys");
   }
 
