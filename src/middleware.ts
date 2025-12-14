@@ -11,6 +11,6 @@ export function middleware(req: NextRequestWithAuth) {
 
 export const config = {
   matcher: [
-    "/((?!api|_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt|auth|.*\\.[^/]+$).*)",
+    "/((?!api|_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt|auth|journeys|.*\\.[^/]+$).*)",
   ],
 };
