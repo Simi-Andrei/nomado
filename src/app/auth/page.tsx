@@ -7,6 +7,12 @@ type AuthPageProps = {
 };
 
 const AuthPage = async ({ searchParams }: AuthPageProps) => {
+  const session = await auth();
+
+  if (session) {
+    redirect("/journeys");
+  }
+
   return <AuthView />;
 };
 export default AuthPage;

@@ -74,6 +74,8 @@ export function SignInCard({
 
       if (result?.url) {
         router.replace(result.url);
+      } else {
+        router.replace("/journeys");
       }
 
       setLoading(false);
